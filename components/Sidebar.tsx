@@ -11,6 +11,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import useStore from "@/store/store";
 
@@ -64,12 +69,25 @@ const Sidebar = ({ side }: { side: string }) => {
         </div>
         {side === "left" && (
           <div>
-            <button
-              onClick={() => handleRoute("calculator")}
-              className="w-16 h-12 block text-center p-4 hover:bg-zinc-100"
-            >
-              <FaRegUser className="w-full scale-150" />
-            </button>
+            <Popover>
+              <PopoverTrigger className="w-16 h-12 block text-center p-4 hover:bg-zinc-100">
+                <FaRegUser className="w-full scale-150" />
+              </PopoverTrigger>
+              <PopoverContent side="right" className="w-96" align="end">
+                Place content for the popover here. Lorem ipsum dolor sit, amet
+                consectetur adipisicing elit. Animi ipsum exercitationem harum
+                voluptatem quia reiciendis minus vitae cupiditate libero
+                suscipit a nisi provident, ducimus vel odit impedit, accusamus
+                quaerat excepturi. Lorem ipsum dolor sit amet, consectetur
+                adipisicing elit. Nobis sapiente dolorum facilis ad est illum
+                doloremque cupiditate earum architecto adipisci, natus eveniet
+                temporibus enim tempore dignissimos nihil quam magni! Optio.
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab
+                labore perferendis quibusdam corrupti officia fugit omnis quis,
+                blanditiis enim unde optio a recusandae quisquam reiciendis
+                doloremque asperiores expedita fugiat accusantium.
+              </PopoverContent>
+            </Popover>
             <Sheet>
               <SheetTrigger className="w-16 h-12 block text-center p-4 hover:bg-zinc-100">
                 <LuSettings className="w-full scale-150" />
