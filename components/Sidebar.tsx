@@ -3,7 +3,6 @@ import { AiOutlineCalculator } from "react-icons/ai";
 import { LuSettings } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import {
   Sheet,
   SheetContent,
@@ -16,7 +15,6 @@ import {
 import useStore from "@/store/store";
 
 const Sidebar = ({ side }: { side: string }) => {
-  const { user, error, isLoading } = useUser();
   const router = useRouter();
   const pathname = usePathname();
   const windows = useStore((store) => store);
@@ -34,8 +32,6 @@ const Sidebar = ({ side }: { side: string }) => {
       router.push(page);
     }
   };
-
-  console.log({ user, error, isLoading });
 
   return (
     <div className="w-16">

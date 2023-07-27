@@ -28,7 +28,7 @@ const Win2 = () => {
   return (
     <>
       <Suspense fallback={<LoadingSkeleton />}>
-        {win2 && (
+        {win2 != "" && (
           <LazyComponentWrapper
             componentName={win2 as keyof typeof componentMap}
           />
