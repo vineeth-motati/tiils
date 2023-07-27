@@ -18,8 +18,11 @@ import {
 } from "@/components/ui/popover";
 
 import useStore from "@/store/store";
+import Link from "next/link";
+import AuthProviders from "./AuthProviders";
+import { getCurrentUser } from "@/lib/session";
 
-const Sidebar = ({ side }: { side: string }) => {
+const Sidebar = ({ side, session }: { side: string; session?: any }) => {
   const router = useRouter();
   const pathname = usePathname();
   const windows = useStore((store) => store);
@@ -74,18 +77,12 @@ const Sidebar = ({ side }: { side: string }) => {
                 <FaRegUser className="w-full scale-150" />
               </PopoverTrigger>
               <PopoverContent side="right" className="w-96" align="end">
-                Place content for the popover here. Lorem ipsum dolor sit, amet
-                consectetur adipisicing elit. Animi ipsum exercitationem harum
-                voluptatem quia reiciendis minus vitae cupiditate libero
-                suscipit a nisi provident, ducimus vel odit impedit, accusamus
-                quaerat excepturi. Lorem ipsum dolor sit amet, consectetur
-                adipisicing elit. Nobis sapiente dolorum facilis ad est illum
-                doloremque cupiditate earum architecto adipisci, natus eveniet
-                temporibus enim tempore dignissimos nihil quam magni! Optio.
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab
-                labore perferendis quibusdam corrupti officia fugit omnis quis,
-                blanditiis enim unde optio a recusandae quisquam reiciendis
-                doloremque asperiores expedita fugiat accusantium.
+                {session && (
+                  <>
+                    <p>{session.user.name}</p>
+                  </>
+                )}
+                Login to save your work <AuthProviders />
               </PopoverContent>
             </Popover>
             <Sheet>

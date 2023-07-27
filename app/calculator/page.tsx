@@ -15,9 +15,7 @@ const Calculator: React.FC<calculatorProps> = ({ className, ...props }) => {
           className={`flex h-full w-full flex-col z-10 bg-calc-gradient p-6`}
         >
           Calculator page
-          <div className="w-80">
-            <Calcy />
-          </div>
+          <Calcy />
         </main>
       </section>
     </section>
