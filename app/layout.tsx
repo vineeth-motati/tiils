@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Topbar from "@/components/Topbar";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
-import { getCurrentUser } from "@/lib/session";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,18 +17,16 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getCurrentUser();
-  console.log(session);
   return (
     <html lang="en">
       <body className={inter.className}>
         <UserProvider>
+          <Topbar />
           <div className="flex">
-            <Topbar />
-          </div>
-          <div className="flex">
-            <Sidebar side="left" session={session} />
-            {children}
+            <Sidebar />
+            <section className="z-10 flex w-full h-auto overflow-auto rounded-md shadow-customShadow">
+              {children}
+            </section>
           </div>
         </UserProvider>
       </body>

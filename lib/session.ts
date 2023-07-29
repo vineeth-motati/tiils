@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<any> {
   const session = await getServerSession(authOptions);
   return session;
 }

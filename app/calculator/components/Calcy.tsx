@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import * as math from "mathjs";
 
@@ -55,17 +56,17 @@ const Calcy: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col justify-end w-fit items-start">
-      <div className="calculator border-1 border-gray-300 p-6 bg-white rounded-lg shadow-lg">
-        <div className="output form-group mb-6">
+    <div className="flex flex-col items-start justify-end w-fit">
+      <div className="p-6 bg-white border-gray-300 rounded-lg shadow-lg calculator border-1">
+        <div className="mb-6 output form-group">
           <input
             type="text"
-            className="ans form-control h-16 text-3xl text-black w-full text-right p-2 rounded-lg focus:outline-none"
+            className="w-full h-16 p-2 text-3xl text-right text-black rounded-lg ans form-control focus:outline-none"
             value={expression}
           />
           <input
             type="text"
-            className="ans form-control h-16 text-3xl text-black w-full text-right p-2 rounded-lg focus:outline-none"
+            className="w-full h-16 p-2 text-3xl text-right text-black rounded-lg ans form-control focus:outline-none"
             value={"=" + result}
             readOnly
           />
