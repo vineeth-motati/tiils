@@ -29,36 +29,51 @@ import { g, auth, config } from "@grafbase/sdk";
 //   likes: g.int().default(0),
 //   author: g.relation(() => user).optional()
 // })
+// @ts-ignore
+const User = g
+  .model("User", {
+    name: g.string().length({ min: 2, max: 20 }),
+    email: g.string().unique(),
+    avatarUrl: g.url().optional(),
+    description: g.string().optional(),
+    githubUrl: g.url().optional(),
+    calculations: g
+      .relation(() => Calculation)
+      .list()
+      .optional(),
 
-const User = g.model("User", {
-  name: g.string().length({ min: 2, max: 20 }),
-  email: g.email().unique(),
-  avatarUrl: g.url().optional(),
-  description: g.string().optional(),
-  githubUrl: g.url().optional(),
-  calculations: g
-    .relation(() => Calculation)
-    .list()
-    .optional(),
+    // Extend models with resolvers
+    // https://grafbase.com/docs/edge-gateway/resolvers
+    // gravatar: g.url().resolver('user/gravatar')
+  })
+  .auth((rules) => {
+    rules.public().read;
+  });
 
-  // Extend models with resolvers
-  // https://grafbase.com/docs/edge-gateway/resolvers
-  // gravatar: g.url().resolver('user/gravatar')
+// @ts-ignore
+const Calculation = g
+  .model("Calculation", {
+    expression: g.string(),
+    result: g.string(),
+    calculatedBy: g.relation(() => User),
+  })
+  .auth((rules) => {
+    rules.public().read, rules.private().create().delete().update();
+  });
+
+const jwt = auth.JWT({
+  issuer: "grafbase",
+  secret: "3mHowxyeYR3Y0HwdphlMIT5/NdHBLhIygt9zz3s2F7M=",
 });
 
-const Calculation = g.model("Calculation", {
-  expression: g.string(),
-  result: g.string(),
-  calculatedBy: g.relation(() => User),
-});
 export default config({
   schema: g,
   // Integrate Auth
   // https://grafbase.com/docs/auth
   // auth: {
-  //   providers: [authProvider],
+  //   providers: [jwt],
   //   rules: (rules) => {
-  //     rules.private()
-  //   }
-  // }
+  //     rules.private();
+  //   },
+  // },
 });

@@ -18,9 +18,13 @@ import { getCurrentUser } from "@/lib/session";
 
 import Link from "next/link";
 import AuthProviders from "./AuthProviders";
+import Image from "next/image";
+import { Button } from "./ui/button";
+import { signOut } from "next-auth/react";
+import SignOutButton from "./SignOutButton";
 
 const Sidebar = async () => {
-  const { user } = await getCurrentUser();
+  const session = await getCurrentUser();
 
   return (
     <div className="w-16">
@@ -53,16 +57,27 @@ const Sidebar = async () => {
         </div>
         <div>
           <Popover>
-            <PopoverTrigger className="block w-16 h-12 p-4 text-center hover:bg-zinc-100">
-              <FaRegUser className="w-full scale-150" />
+            <PopoverTrigger className="flex items-center justify-center w-16 h-12 hover:bg-zinc-100">
+              {session?.user ? (
+                <Image
+                  src={session.user.image}
+                  alt="Profile pic"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              ) : (
+                <FaRegUser className="w-full scale-150" />
+              )}
             </PopoverTrigger>
             <PopoverContent side="right" className="w-96" align="end">
-              {user && (
+              {session?.user ? (
+                <SignOutButton user={session.user} />
+              ) : (
                 <>
-                  <p>{user.name}</p>
+                  Login to save your work <AuthProviders />
                 </>
               )}
-              Login to save your work <AuthProviders />
             </PopoverContent>
           </Popover>
           <Sheet>
