@@ -19,12 +19,12 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`relative ${inter.className}`}>
         <UserProvider loginUrl="" profileUrl="">
           <Topbar />
           <div className="flex">
             <Sidebar />
-            <section className="z-10 flex w-full h-auto overflow-auto rounded-md shadow-customShadow">
+            <section className="z-10 flex w-full h-auto overflow-auto rounded-md">
               {children}
             </section>
           </div>

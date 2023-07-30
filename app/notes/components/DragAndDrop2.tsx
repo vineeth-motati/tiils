@@ -6,7 +6,7 @@ interface Item {
   name: string;
 }
 
-const DnD: React.FC = () => {
+const DragAndDrop2: React.FC = () => {
   const [listA, setListA] = useState<Item[]>([
     {
       id: 1,
@@ -246,4 +246,4 @@ const DnD: React.FC = () => {
   );
 };
 
-export default DnD;
+export default DragAndDrop2;
