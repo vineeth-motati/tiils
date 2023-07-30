@@ -6,7 +6,7 @@ interface Item {
   name: string;
 }
 
-const DragAndDrop: React.FC = () => {
+const DnD: React.FC = () => {
   const [listA, setListA] = useState<Item[]>([
     {
       id: 1,
@@ -32,7 +32,7 @@ const DragAndDrop: React.FC = () => {
       id: 6,
       name: "Item 6",
     },
-    // Add more items as needed
+    // Existing listA items...
   ]);
 
   const [listB, setListB] = useState<Item[]>([
@@ -60,6 +60,35 @@ const DragAndDrop: React.FC = () => {
       id: 12,
       name: "Item 12",
     },
+    // Existing listB items...
+  ]);
+
+  const [listC, setListC] = useState<Item[]>([
+    // Add new items for listC as needed
+    {
+      id: 13,
+      name: "Item 13",
+    },
+    {
+      id: 14,
+      name: "Item 14",
+    },
+    {
+      id: 15,
+      name: "Item 15",
+    },
+    {
+      id: 16,
+      name: "Item 16",
+    },
+    {
+      id: 17,
+      name: "Item 17",
+    },
+    {
+      id: 18,
+      name: "Item 18",
+    },
     // Add more items as needed
   ]);
 
@@ -74,28 +103,44 @@ const DragAndDrop: React.FC = () => {
     // Check if the drag happened within the same list or across lists
     if (source.droppableId === destination.droppableId) {
       // Reorder the elements in the same list
-      const list = source.droppableId === "listA" ? [...listA] : [...listB];
-      const [removed] = list.splice(source.index, 1);
-      list.splice(destination.index, 0, removed);
-
       if (source.droppableId === "listA") {
+        const list = [...listA];
+        const [removed] = list.splice(source.index, 1);
+        list.splice(destination.index, 0, removed);
         setListA(list);
-      } else {
+      } else if (source.droppableId === "listB") {
+        const list = [...listB];
+        const [removed] = list.splice(source.index, 1);
+        list.splice(destination.index, 0, removed);
         setListB(list);
+      } else {
+        const list = [...listC];
+        const [removed] = list.splice(source.index, 1);
+        list.splice(destination.index, 0, removed);
+        setListC(list);
       }
     } else {
       // Move the element from one list to another
       const sourceList =
-        source.droppableId === "listA" ? [...listA] : [...listB];
-      const destList =
-        destination.droppableId === "listA" ? [...listA] : [...listB];
+        source.droppableId === "listA"
+          ? { list: listA, setList: setListA }
+          : source.droppableId === "listB"
+          ? { list: listB, setList: setListB }
+          : { list: listC, setList: setListC };
 
-      const [removed] = sourceList.splice(source.index, 1);
-      destList.splice(destination.index, 0, removed);
+      const destList =
+        destination.droppableId === "listA"
+          ? { list: listA, setList: setListA }
+          : destination.droppableId === "listB"
+          ? { list: listB, setList: setListB }
+          : { list: listC, setList: setListC };
+
+      const [removed] = sourceList.list.splice(source.index, 1);
+      destList.list.splice(destination.index, 0, removed);
 
       // Ensure we update both lists even if one list is empty
-      setListA(source.droppableId === "listA" ? sourceList : destList);
-      setListB(destination.droppableId === "listA" ? sourceList : destList);
+      sourceList.setList([...sourceList.list]);
+      destList.setList([...destList.list]);
     }
   };
 
@@ -165,9 +210,40 @@ const DragAndDrop: React.FC = () => {
             )}
           </Droppable>
         </div>
+        <div className="h-full border-2 rounded-md w-96">
+          <Droppable droppableId="listC">
+            {(provided) => (
+              <ul
+                className="h-full listC"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {listC.map((item, i) => (
+                  <Draggable
+                    key={item.id}
+                    draggableId={item.id.toString()}
+                    index={i}
+                  >
+                    {(provided) => (
+                      <li
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+                        className="py-6 text-center border"
+                      >
+                        {item.name}
+                      </li>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </div>
       </div>
     </DragDropContext>
   );
 };
 
-export default DragAndDrop;
+export default DnD;
