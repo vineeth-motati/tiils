@@ -63,7 +63,7 @@ module.exports = {
       },
       boxShadow: {
         customShadow:
-          "rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px",
+          "rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 5px 1px",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -86,5 +86,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 };

@@ -24,7 +24,7 @@ export default async function RootLayout({
           <Topbar />
           <div className="flex">
             <Sidebar />
-            <section className="z-10 flex w-full h-auto overflow-auto rounded-md">
+            <section className="z-10 flex w-full h-auto overflow-auto rounded-md shadow-customShadow">
               {children}
             </section>
           </div>
