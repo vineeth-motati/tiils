@@ -54,8 +54,12 @@ module.exports = {
       backgroundImage: {
         "main-gradient":
           "conic-gradient(from 45deg, rgba(255, 255, 255, 1.0),  rgba(223, 211, 255, 1.0))",
+        "home-gradient":
+          "conic-gradient(from 45deg, rgba(255, 255, 255, 1.0), rgba(255, 211, 251, 1.0))",
         "calc-gradient":
-          "conic-gradient(from 45deg, rgba(255, 255, 255, 1.0), rgba(211, 252, 255, 1.0))",
+          "conic-gradient(from 45deg, rgba(255, 255, 255, 1.0), rgba(211, 241, 255, 1.0))",
+        "notes-gradient":
+          "conic-gradient(from 45deg, rgba(255, 255, 255, 1.0), rgba(211, 255, 222, 1.0))",
       },
       boxShadow: {
         customShadow:
