@@ -14,12 +14,12 @@ const LiSkeleton = () => {
   return (
     <Skeleton>
       <div className="m-h-[500px] bg-white flex gap-4 flex-col">
-        <div className="w-full h-20 bg-gray-300 border rounded-md"></div>
-        <div className="w-full h-20 bg-gray-300 border rounded-md"></div>
-        <div className="w-full h-20 bg-gray-300 border rounded-md"></div>
-        <div className="w-full h-20 bg-gray-300 border rounded-md"></div>
-        <div className="w-full h-20 bg-gray-300 border rounded-md"></div>
-        <div className="w-full h-20 bg-gray-300 border rounded-md"></div>
+        {[...Array(6)].map((_, index) => (
+          <div
+            key={index}
+            className="h-20 bg-gray-300 border rounded-md w-96"
+          ></div>
+        ))}
       </div>
     </Skeleton>
   );
@@ -61,31 +61,12 @@ const ContainerDiv = (props: any) => {
 };
 const markdown = `A paragraph with *emphasis* and **strong importance**.
 > A block quote with ~~strikethrough~~ and a URL: https://reactjs.org.
-* Lists
-* [ ] todo
-* [x] done
----
-***
 
-| Feature    | Support              |
-| ---------: | :------------------- |
-| CommonMark | 100%                 |
-| GFM        | 100% w/ \`remark-gfm\` |
 `;
 
 const DragAndDrop3: React.FC = () => {
-  const [listA, setListA] = useState<Item[]>([
-    // Existing listA items...
-  ]);
-
-  const [listB, setListB] = useState<Item[]>([
-    // Existing listB items...
-  ]);
-
-  const [listC, setListC] = useState<Item[]>([
-    // Add new items for listC as needed
-    // Add more items as needed
-  ]);
+  const [lists, setLists] = useState<{ id: string; items: Item[] }[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fakeFetchData = () => {
@@ -173,15 +154,15 @@ const DragAndDrop3: React.FC = () => {
       ];
 
       // Simulate a delay before setting the state to mimic data fetching
+
       setTimeout(() => {
-        setListA(dataA);
-        setTimeout(() => {
-          setListB(dataB);
-          setTimeout(() => {
-            setListC(dataC);
-          }, 500);
-        }, 500);
-      }, 500);
+        setLists([
+          { id: "listA", items: dataA },
+          { id: "listB", items: dataB },
+          { id: "listC", items: dataC },
+        ]);
+        setIsLoading(false);
+      }, 1500);
     };
 
     fakeFetchData();
@@ -198,156 +179,96 @@ const DragAndDrop3: React.FC = () => {
     // Check if the drag happened within the same list or across lists
     if (source.droppableId === destination.droppableId) {
       // Reorder the elements in the same list
-      if (source.droppableId === "listA") {
-        const list = [...listA];
+      const listIndex = lists.findIndex(
+        (list) => list.id === source.droppableId
+      );
+      if (listIndex !== -1) {
+        const list = [...lists[listIndex].items];
         const [removed] = list.splice(source.index, 1);
         list.splice(destination.index, 0, removed);
-        setListA(list);
-      } else if (source.droppableId === "listB") {
-        const list = [...listB];
-        const [removed] = list.splice(source.index, 1);
-        list.splice(destination.index, 0, removed);
-        setListB(list);
-      } else {
-        const list = [...listC];
-        const [removed] = list.splice(source.index, 1);
-        list.splice(destination.index, 0, removed);
-        setListC(list);
+        const updatedLists = [...lists];
+        updatedLists[listIndex] = { ...lists[listIndex], items: list };
+        setLists(updatedLists);
       }
     } else {
       // Move the element from one list to another
-      const sourceList =
-        source.droppableId === "listA"
-          ? { list: listA, setList: setListA }
-          : source.droppableId === "listB"
-          ? { list: listB, setList: setListB }
-          : { list: listC, setList: setListC };
+      const sourceListIndex = lists.findIndex(
+        (list) => list.id === source.droppableId
+      );
+      const destListIndex = lists.findIndex(
+        (list) => list.id === destination.droppableId
+      );
 
-      const destList =
-        destination.droppableId === "listA"
-          ? { list: listA, setList: setListA }
-          : destination.droppableId === "listB"
-          ? { list: listB, setList: setListB }
-          : { list: listC, setList: setListC };
+      if (sourceListIndex !== -1 && destListIndex !== -1) {
+        const sourceList = [...lists[sourceListIndex].items];
+        const destList = [...lists[destListIndex].items];
 
-      const [removed] = sourceList.list.splice(source.index, 1);
-      destList.list.splice(destination.index, 0, removed);
+        const [removed] = sourceList.splice(source.index, 1);
+        destList.splice(destination.index, 0, removed);
 
-      // Ensure we update both lists even if one list is empty
-      sourceList.setList([...sourceList.list]);
-      destList.setList([...destList.list]);
+        const updatedLists = [...lists];
+        updatedLists[sourceListIndex] = {
+          ...lists[sourceListIndex],
+          items: sourceList,
+        };
+        updatedLists[destListIndex] = {
+          ...lists[destListIndex],
+          items: destList,
+        };
+
+        setLists(updatedLists);
+      }
     }
+  };
+
+  const renderDroppableList = (list: Item[], droppableId: string) => {
+    return (
+      <ContainerDiv key={droppableId} className="h-full">
+        <Droppable droppableId={droppableId}>
+          {(provided) => (
+            <Ul
+              className={droppableId}
+              {...provided.droppableProps}
+              innerRef={provided.innerRef}
+            >
+              {list.map((item, i) => (
+                <Draggable
+                  key={item.id}
+                  draggableId={item.id.toString()}
+                  index={i}
+                >
+                  {(provided) => (
+                    <Li
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      innerRef={provided.innerRef}
+                      className=""
+                    >
+                      {item.name}
+                    </Li>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </Ul>
+          )}
+        </Droppable>
+      </ContainerDiv>
+    );
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <h1>Notes page</h1>
       <div className="flex bg-white p-4 rounded-md shadow-xl min-h-[500px] space-x-4 m-5">
-        <ContainerDiv className="">
-          <Droppable droppableId="listA">
-            {(provided) => (
-              <Ul
-                className="listA"
-                {...provided.droppableProps}
-                innerRef={provided.innerRef}
-              >
-                {listA.length > 0 ? (
-                  listA.map((item, i) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id.toString()}
-                      index={i}
-                    >
-                      {(provided) => (
-                        <Li
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          innerRef={provided.innerRef}
-                          className=""
-                        >
-                          {item.name}
-                        </Li>
-                      )}
-                    </Draggable>
-                  ))
-                ) : (
-                  <LiSkeleton />
-                )}
-                {provided.placeholder}
-              </Ul>
-            )}
-          </Droppable>
-        </ContainerDiv>
-        <ContainerDiv className="">
-          <Droppable droppableId="listB">
-            {(provided) => (
-              <Ul
-                className="listB"
-                {...provided.droppableProps}
-                innerRef={provided.innerRef}
-              >
-                {listB.length > 0 ? (
-                  listB.map((item, i) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id.toString()}
-                      index={i}
-                    >
-                      {(provided) => (
-                        <Li
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          innerRef={provided.innerRef}
-                          className=""
-                        >
-                          {item.name}
-                        </Li>
-                      )}
-                    </Draggable>
-                  ))
-                ) : (
-                  <LiSkeleton />
-                )}
-                {provided.placeholder}
-              </Ul>
-            )}
-          </Droppable>
-        </ContainerDiv>
-        <ContainerDiv className="">
-          <Droppable droppableId="listC">
-            {(provided) => (
-              <Ul
-                className="listC"
-                {...provided.droppableProps}
-                innerRef={provided.innerRef}
-              >
-                {listC.length > 0 ? (
-                  listC.map((item, i) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id.toString()}
-                      index={i}
-                    >
-                      {(provided) => (
-                        <Li
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          innerRef={provided.innerRef}
-                          className=""
-                        >
-                          {item.name}
-                        </Li>
-                      )}
-                    </Draggable>
-                  ))
-                ) : (
-                  <LiSkeleton />
-                )}
-                {provided.placeholder}
-              </Ul>
-            )}
-          </Droppable>
-        </ContainerDiv>
+        {isLoading && (
+          <>
+            <LiSkeleton />
+            <LiSkeleton />
+            <LiSkeleton />
+          </>
+        )}
+        {lists.map((list) => renderDroppableList(list.items, list.id))}
       </div>
     </DragDropContext>
   );
