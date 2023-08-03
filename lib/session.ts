@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
         {
           ...token,
           iss: "grafbase",
-          exp: Math.floor(Date.now()),
+          exp: Math.floor(Date.now() / 1000) + 60 * 60,
         },
         secret
       );

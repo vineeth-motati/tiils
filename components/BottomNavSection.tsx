@@ -39,7 +39,7 @@ const BottomNavSection = async () => {
             <SignOutButton user={session.user} />
           ) : (
             <>
-              Login to save your work <AuthProviders />
+              <AuthProviders />
             </>
           )}
         </PopoverContent>

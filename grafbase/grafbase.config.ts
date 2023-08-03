@@ -41,6 +41,10 @@ const User = g
       .relation(() => Calculation)
       .list()
       .optional(),
+    notes: g
+      .relation(() => Note)
+      .list()
+      .optional(),
 
     // Extend models with resolvers
     // https://grafbase.com/docs/edge-gateway/resolvers
@@ -61,6 +65,15 @@ const Calculation = g
     rules.public().read, rules.private().create().delete().update();
   });
 
+const Note = g.model("Note", {
+  content: g.string(),
+  category: g.string(),
+  tags: g.string().list().optional(),
+  isDone: g.boolean(),
+  author: g.relation(() => User),
+});
+
+// Integrate Auth
 const jwt = auth.JWT({
   issuer: "grafbase",
   secret: "3mHowxyeYR3Y0HwdphlMIT5/NdHBLhIygt9zz3s2F7M=",
@@ -70,10 +83,10 @@ export default config({
   schema: g,
   // Integrate Auth
   // https://grafbase.com/docs/auth
-  // auth: {
-  //   providers: [jwt],
-  //   rules: (rules) => {
-  //     rules.private();
-  //   },
-  // },
+  auth: {
+    providers: [jwt],
+    rules: (rules) => {
+      rules.private();
+    },
+  },
 });

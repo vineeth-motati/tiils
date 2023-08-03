@@ -1,9 +1,10 @@
-"use client";
 import { Skeleton } from "@/components/ui/skeleton";
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { getNotes } from "@/lib/actions";
+import { getCurrentUser } from "@/lib/session";
 
 interface Item {
   id: number;
@@ -26,16 +27,35 @@ const LiSkeleton = () => {
 };
 
 const Li = (props: any) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  useEffect(() => {
+    console.log(props.itemId);
+  }, [isEditMode]);
+
   return (
     <li
       {...props}
       ref={props.innerRef}
-      className={`py-7 border-2 my-2 border-gray-400 rounded-md bg-white prose  ${props.className}`}
+      className={`border-2 my-2 border-gray-400 rounded-md bg-white prose  ${props.className}`}
+      onClick={() => setIsEditMode(() => true)}
     >
-      <ReactMarkdown
-        children={`${props.children}`}
-        remarkPlugins={[remarkGfm]}
-      />
+      <div className="py-1">
+        {!isEditMode && (
+          <ReactMarkdown
+            children={`${props.value}`}
+            remarkPlugins={[remarkGfm]}
+          />
+        )}
+        {isEditMode && (
+          <textarea
+            name=""
+            id=""
+            value={props.value}
+            className="w-full bg-gray-100 outline-none"
+            onBlur={() => setIsEditMode(() => false)}
+          ></textarea>
+        )}
+      </div>
     </li>
   );
 };
@@ -165,6 +185,17 @@ const DragAndDrop3: React.FC = () => {
       }, 1500);
     };
 
+    // const fetchNotesData = async () => {
+    //   const session = await getCurrentUser();
+    //   const notes = await getNotes("vineethdev06@gmail.com");
+    //   console.log("====================================");
+    //   console.log(notes);
+    //   console.log(session);
+
+    //   console.log("====================================");
+    // };
+    // fetchNotesData();
+
     fakeFetchData();
   }, []);
 
@@ -243,9 +274,9 @@ const DragAndDrop3: React.FC = () => {
                       {...provided.dragHandleProps}
                       innerRef={provided.innerRef}
                       className=""
-                    >
-                      {item.name}
-                    </Li>
+                      value={item.name}
+                      itemId={item.id}
+                    />
                   )}
                 </Draggable>
               ))}
