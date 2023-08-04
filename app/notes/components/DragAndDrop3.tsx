@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 
 interface Item {
   id: number;
-  name: string;
+  name?: string;
+  content?: string;
 }
 
 const Li = (props: any) => {
@@ -18,7 +19,7 @@ const Li = (props: any) => {
   const [addMode, setAddMode] = useState(false);
   const [value, setValue] = useState(props.value);
   useEffect(() => {
-    console.log(props);
+    // console.log(props);
   }, [isEditMode]);
 
   const handleEdit = () => {
@@ -27,16 +28,14 @@ const Li = (props: any) => {
 
   const handleSave = () => {
     setIsEditMode(false);
-    // ... existing code ...
-    props.handleEdit(props.itemId, value, props.category); // Renamed to handleEdit
+    props.handleEdit(props.itemID, value, props.category);
   };
 
   const handleAdd = (e: any) => {
     setAddMode(false);
     console.log(value, props.category);
 
-    // ... existing code ...
-    if (value !== "") props.handleAdd(value, props.category); // Renamed to handleAdd
+    if (value !== "") props.handleAdd(value, props.category);
     setValue("");
   };
 
@@ -92,6 +91,43 @@ const Li = (props: any) => {
   );
 };
 
+const AddNew = (props: any) => {
+  const [addMode, setAddMode] = useState(false);
+  const [value, setValue] = useState("");
+
+  const handleAdd = (e: any) => {
+    setAddMode(false);
+    console.log(value, props.category);
+
+    if (value !== "") props.handleAdd(value, props.category);
+    setValue("");
+  };
+  return (
+    <div className="">
+      {!addMode && (
+        <Button variant="secondary" onClick={() => setAddMode(true)}>
+          + Add new
+        </Button>
+      )}
+      {addMode && (
+        <div
+          className={`border-2 my-2 px-1 py-2 border-gray-400 rounded-md bg-white prose list-none  ${props.className}`}
+        >
+          <textarea
+            name=""
+            id=""
+            autoFocus={true}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            className="w-full bg-gray-100 outline-none resize-none"
+            onBlur={handleAdd}
+          ></textarea>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Ul = (props: any) => {
   return (
     <ul
@@ -115,38 +151,92 @@ const markdown = `A paragraph with *emphasis* and **strong importance**.
 > A block quote with ~~strikethrough~~ and a URL: https://reactjs.org.
 
 `;
-
-const DragAndDrop3: React.FC = () => {
+interface DragAndDrop3Props {
+  notesData: any;
+}
+const DragAndDrop3: React.FC<DragAndDrop3Props> = ({ notesData }) => {
   const [lists, setLists] = useState<{ id: string; items: Item[] }[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [organizedData, setOrganizedData] = useState([]);
 
+  function organizeDataByCategory(data) {
+    const organizedData = {};
+
+    data.forEach(({ node }) => {
+      const { category, ...rest } = node;
+
+      if (organizedData) {
+        if (!organizedData[category]) {
+          organizedData[category] = {
+            id: category,
+            items: [],
+          };
+        }
+      }
+
+      organizedData[category].items.push(rest);
+    });
+
+    return Object.values(organizedData);
+  }
+  // Function to organize the data
+  // const organizeData = (data) => {
+  //   const organized = data.reduce((acc, curr) => {
+  //     const category = curr.node.category;
+  //     const existingCategory = acc.find((item) => item.id === category);
+
+  //     if (existingCategory) {
+  //       existingCategory.items.push(curr.node);
+  //     } else {
+  //       acc.push({ id: category, items: [curr.node] });
+  //     }
+
+  //     return acc;
+  //   }, []);
+
+  //   setOrganizedData(organized);
+  // };
+
+  // console.log(JSON.parse(notesData.value));
+
+  // organizeData(JSON.parse(notesData.value));
+
+  // notesData
+  //   .then((result) => {
+  //     const notes = result.user.notes.edges;
+  //     organizeData(notes);
+  //   })
+  //   .then(() => {
+  //     // setLists(organizedData);
+  //     setIsLoading(false);
+  //   });
   useEffect(() => {
     const fakeFetchData = () => {
       // Simulated data
       const dataA = [
         {
           id: 1,
-          name: "**Item 1**",
+          content: "**Item 1**",
         },
         {
           id: 2,
-          name: "~~Item 2~~",
+          content: "~~Item 2~~",
         },
         {
           id: 3,
-          name: "*Item 3*",
+          content: "*Item 3*",
         },
         {
           id: 4,
-          name: "#### Item 4",
+          content: "#### Item 4",
         },
         {
           id: 5,
-          name: "---",
+          content: "---",
         },
         {
           id: 6,
-          name: "*",
+          content: "*",
         },
         // Add more items as needed
       ];
@@ -154,82 +244,91 @@ const DragAndDrop3: React.FC = () => {
       const dataB = [
         {
           id: 7,
-          name: "https://reactjs.com",
+          content: "https://reactjs.com",
         },
         {
           id: 8,
-          name: markdown,
+          content: markdown,
         },
         {
           id: 9,
-          name: "Item 9",
+          content: "Item 9",
         },
         {
           id: 10,
-          name: "Item 10",
+          content: "Item 10",
         },
         {
           id: 11,
-          name: "Item 11",
+          content: "Item 11",
         },
         {
           id: 12,
-          name: "Item 12",
+          content: "Item 12",
         },
       ];
 
       const dataC = [
         {
           id: 13,
-          name: "Item 13",
+          content: "Item 13",
         },
         {
           id: 14,
-          name: "Item 14",
+          content: "Item 14",
         },
         {
           id: 15,
-          name: "Item 15",
+          content: "Item 15",
         },
         {
           id: 16,
-          name: "Item 16",
+          content: "Item 16",
         },
         {
           id: 17,
-          name: "Item 17",
+          content: "Item 17",
         },
         {
           id: 18,
-          name: "Item 18",
+          content: "Item 18",
         },
       ];
 
       // Simulate a delay before setting the state to mimic data fetching
+      setLists([
+        { id: "1", items: dataA },
+        { id: "2", items: dataB },
+        { id: "3", items: dataC },
+      ]);
 
-      setTimeout(() => {
-        setLists([
-          { id: "listA", items: dataA },
-          { id: "listB", items: dataB },
-          { id: "listC", items: dataC },
-        ]);
-        setIsLoading(false);
-      }, 1500);
+      // setLists(organizedData);
     };
 
-    // const fetchNotesData = async () => {
-    //   const session = await getCurrentUser();
-    //   const notes = await getNotes("vineethdev06@gmail.com");
-    //   console.log("====================================");
-    //   console.log(notes);
-    //   console.log(session);
+    //   // // const fetchNotesData = async () => {
+    //   // //   const session = await getCurrentUser();
+    //   // //   const notes = await getNotes("vineethdev06@gmail.com");
+    //   // //   console.log("====================================");
+    //   // //   console.log(notes);
+    //   // //   console.log(session);
 
-    //   console.log("====================================");
-    // };
-    // fetchNotesData();
+    //   // //   console.log("====================================");
+    //   // // };
+    //   // // fetchNotesData();
+    const data = JSON.parse(notesData.value);
+    if (data) {
+      console.log(data && data.user.notes.edges);
+      setLists(organizeDataByCategory(data.user.notes.edges));
+      // setOrganizedData(organizeDataByCategory(data.user.notes.edges))
+      // console.log(organizeDataByCategory(data.user.notes.edges));
+      setIsLoading(false);
+    } else {
+      fakeFetchData();
+      setIsLoading(false);
+    }
 
-    fakeFetchData();
-  }, []);
+    // console.log(lists, organizedData);
+  }, [notesData]);
 
   const handleDragEnd = (result: any) => {
     const { source, destination } = result;
@@ -285,7 +384,7 @@ const DragAndDrop3: React.FC = () => {
     }
   };
   const handleItemEdit = (
-    itemId: number,
+    itemID: number,
     newValue: string,
     category: string
   ) => {
@@ -293,7 +392,7 @@ const DragAndDrop3: React.FC = () => {
     const updatedLists = lists.map((list) => {
       if (list.id === category) {
         const updatedItems = list.items.map((item) =>
-          item.id === itemId ? { ...item, name: newValue } : item
+          item.id === itemID ? { ...item, content: newValue } : item
         );
         return { ...list, items: updatedItems };
       }
@@ -305,7 +404,7 @@ const DragAndDrop3: React.FC = () => {
     // Generate a new unique id for the new item (you can use a library like uuid for this)
     const newId = Date.now();
     // Create a new item object
-    const newItem = { id: newId, name: newValue };
+    const newItem = { id: newId, content: newValue };
     // Find the list containing the category and add the new item
     const updatedLists = lists.map((list) => {
       if (list.id === category) {
@@ -339,9 +438,9 @@ const DragAndDrop3: React.FC = () => {
                       {...provided.dragHandleProps}
                       innerRef={provided.innerRef}
                       className=""
-                      value={item.name}
+                      value={item.content}
                       category={droppableId}
-                      itemId={item.id}
+                      itemID={item.id}
                       handleEdit={handleItemEdit}
                     />
                   )}
@@ -351,7 +450,17 @@ const DragAndDrop3: React.FC = () => {
             </Ul>
           )}
         </Droppable>
-        <Li category={droppableId} addNew={true} handleAdd={handleItemAdd} />
+        {/* <Li
+          itemID={list.length + 1}
+          category={droppableId}
+          addNew={true}
+          handleAdd={handleItemAdd}
+        /> */}
+        <AddNew
+          category={droppableId}
+          addNew={true}
+          handleAdd={handleItemAdd}
+        />
       </ContainerDiv>
     );
   };

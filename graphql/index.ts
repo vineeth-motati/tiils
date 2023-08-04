@@ -62,6 +62,7 @@ export const getNoteQuery = `
     notes(first: 100) {
       edges {
         node {
+          id
           content
           category
           tags
